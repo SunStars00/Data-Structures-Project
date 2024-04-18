@@ -31,6 +31,27 @@ int WDGraph::get_vertex_index(const WDVertex& ver) const
     return -1;
 }
 
+const WDVertex& WDGraph::GetVertexAtIndex(int index) const
+{
+    return vertices[index];
+}
+
+int WDGraph::SearchForCodeIndex(char* code)
+{
+    for (int i = 0; i < vertices.size(); i++)
+        if (vertices[i].CompareCode(code))
+            return i;
+    return -1;
+}
+
+const WDVertex& WDGraph::SearchForCode(char* code)
+{
+    for (int i = 0; i < vertices.size(); i++)
+        if (vertices[i].CompareCode(code))
+            return vertices[i];
+    return WDVertex();
+}
+
 void WDGraph::print() const
 {
 }
