@@ -6,21 +6,21 @@ class WDEdge
 public:
 	int src;
 	int dest;
-	int weight;
+	int distance;
 	int cost;
 
 	WDEdge()
 	{
 		src = 0;
 		dest = 0;
-		weight = 0;
+		distance = 0;
 		cost = 0;
 	}
-	WDEdge(int srcInt, int destInt, int weightInt, int costInt)
+	WDEdge(int srcInt, int destInt, int distanceInt, int costInt)
 	{
 		src = srcInt;
 		dest = destInt;
-		weight = weightInt;
+		distance = distanceInt;
 		cost = costInt;
 	}
 };
