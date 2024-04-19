@@ -49,7 +49,7 @@ const WDVertex& WDGraph::SearchForCode(char* code)
     for (int i = 0; i < vertices.size(); i++)
         if (vertices[i].CompareCode(code))
             return vertices[i];
-    return WDVertex();
+    throw std::string("Error in SearchForCode: could not find code");
 }
 
 void WDGraph::print() const

@@ -18,7 +18,7 @@ public:
     const WDVertex& GetVertexAtIndex(int index) const;
 
     int SearchForCodeIndex(char* code); //code should point to three characters
-    const WDVertex& SearchForCode(char* code); //code should point to three characters
+    const WDVertex& SearchForCode(char* code); //code should point to three characters, return value is liable to invalidation
 
 
     void print() const;
