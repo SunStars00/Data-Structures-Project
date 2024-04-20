@@ -10,6 +10,8 @@ private:
 	std::vector<char> apCodes; //3*number of elements, each element is unique
 	std::vector<char> stCodes; //2*number of elements
 public:
+	const std::vector<char>& GetApCodes() const { return apCodes; }
+	const std::vector<char>& GetStCodes() const { return stCodes; }
 
 	void AddAirportAndState(const char* apCode, const char* stCode); //checks for already existing airport
 

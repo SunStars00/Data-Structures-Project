@@ -1,0 +1,24 @@
+WARNFLAGS := -Wall -Werror -Wno-unused-but-set-variable -Wno-unused-variable -Wno-misleading-indentation -Wno-sign-compare -Wno-unused-function -Wno-comment
+PNAMES := WDGraph TestDirectedGraph AirportParser
+PONAMES := $(foreach prog, $(PNAMES), $(prog).o)
+.SUFFIXES:
+
+INCLUDES := ../include
+
+test: $(PONAMES)
+	g++ $(WARNFLAGS) -std=c++14 -static -static-libstdc++ $(PONAMES) -o test.exe	
+
+define compileprog = 
+$(1).o: $(1).cpp
+	gcc $(WARNFLAGS) -std=c++14 -isystem . $(foreach dir, $(INCLUDES), -I $(dir)) $(1).cpp -c -o $(1).o
+endef
+
+$(foreach prog, $(PNAMES), $(eval $(call compileprog,$(prog))))
+
+define command =
+rm -f $(fname).o
+
+endef
+clean:
+	rm -f test.exe
+	$(foreach fname, $(PNAMES), $(command))
