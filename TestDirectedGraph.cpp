@@ -1,5 +1,5 @@
 #include "WDGraph.h"
-#include "AirportParser.h"
+#include "AirportStatePair.h"
 
 #include <iostream>
 #include <fstream>
@@ -9,7 +9,7 @@ using namespace std;
 
 string inputFilePath = "airports.csv";
 
-void CreateGraphFromFile(WDGraph& graph, AirportParser& ap)
+void CreateGraphFromFile(WDGraph& graph, AirportStatePair& ap)
 {
     //cout << "CreateGraphFromFile" << endl;
 
@@ -67,6 +67,8 @@ void CreateGraphFromFile(WDGraph& graph, AirportParser& ap)
         graph.add_vertex(originAirport.c_str());
         graph.add_vertex(destinationAirport.c_str());
         graph.add_edge(originAirport.c_str(), destinationAirport.c_str(), stoi(distance), stoi(cost));
+
+        //add states to AirportStatePair
         char state[2]; state[0] = originState[0]; state[1] = originState[1];
         ap.AddAirportAndState(originAirport.c_str(), state);
         state[0] = destinationState[0]; state[1] = destinationState[1];
@@ -83,15 +85,24 @@ void CreateGraphFromFile(WDGraph& graph, AirportParser& ap)
 int main()
 {
     WDGraph graph;
-    AirportParser ap;
+    AirportStatePair ap;
     CreateGraphFromFile(graph, ap);
 
     //Path p = graph.GetShortestPath(graph.SearchForCodeIndex("ATL"), graph.SearchForCodeIndex("SLC"));
-    Path p1 = graph.GetShortestPath(graph.SearchForCodeIndex("IAD"), graph.SearchForCodeIndex("MIA"));
-    std::vector<Path> p2 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("ATL"), "FL", ap);
-    std::vector<Path> p3 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("ATL"), "NY", ap);
-    std::vector<Path> p4 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("ATL"), "TX", ap);
-    std::vector<Path> p5 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("MCO"), "TX", ap);
+    Path p1 = graph.GetShortestPath("IAD", "MIA");
+    
+    std::vector<Path> p2 = graph.GetShortestPathsToState("ATL", "FL", ap);
+    std::vector<Path> p3 = graph.GetShortestPathsToState("ATL", "NY", ap);
+    std::vector<Path> p4 = graph.GetShortestPathsToState("ATL", "TX", ap);
+    std::vector<Path> p5 = graph.GetShortestPathsToState("MCO", "TX", ap);
+    
+    Path p6 = graph.GetShortestPathFixedStops("ATL", "ELP", 2);
+    Path p7 = graph.GetShortestPathFixedStops("MCO", "AUS", 1);
+    Path p8 = graph.GetShortestPathFixedStops("MCO", "ELP", 2);
+    Path p9 = graph.GetShortestPathFixedStops("IAD", "MIA", 3);
+    Path p10 = graph.GetShortestPathFixedStops("ORD", "PIA", 0);
+
+    Path p11 = graph.GetShortestPathFixedStops("IAD", "MIA", 1);
 
     int a1 = graph.SearchForCodeIndex("ATL");
     int a2 = graph.SearchForCodeIndex("ORD");

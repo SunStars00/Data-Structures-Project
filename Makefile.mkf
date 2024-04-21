@@ -1,5 +1,5 @@
 WARNFLAGS := -Wall -Werror -Wno-unused-but-set-variable -Wno-unused-variable -Wno-misleading-indentation -Wno-sign-compare -Wno-unused-function -Wno-comment
-PNAMES := WDGraph TestDirectedGraph AirportParser
+PNAMES := WDGraph TestDirectedGraph AirportStatePair
 PONAMES := $(foreach prog, $(PNAMES), $(prog).o)
 .SUFFIXES:
 

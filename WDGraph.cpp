@@ -49,9 +49,11 @@ const WDVertex& WDGraph::SearchForCode(const char* code) const
     for (int i = 0; i < vertices.size(); i++)
         if (vertices[i].CompareCode(code))
             return vertices[i];
+    //if an invalid code was found, a reference can't be returned
     throw std::string("Error in SearchForCode: could not find code");
 }
 
+//Like Dijkstra's but without the priority queue
 Path WDGraph::GetShortestPath(int originIndex, int destIndex, bool doPrint) const
 {
     if (originIndex == destIndex) //return empty path if origin and dest are the same
@@ -63,15 +65,15 @@ Path WDGraph::GetShortestPath(int originIndex, int destIndex, bool doPrint) cons
     vertexBestDists.resize(vertices.size());
     for (int i = 0; i < vertexBestDists.size(); i++)
         vertexBestDists[i] = -1;
-    std::vector<int> vertexBestDirections; //Because graph is directed, this stores the smallest dist node that connects towards this node
+    std::vector<int> vertexBestDirections; //Because graph is directed, this stores the smallest dist vertex that connects towards this node
     vertexBestDirections.resize(vertices.size());
     for (int i = 0; i < vertexBestDirections.size(); i++)
         vertexBestDirections[i] = -1;
 
-    std::vector<int> vertexCheckStack; //Nodes to check
+    std::vector<int> vertexCheckStack; //Vertices to check
     vertexCheckStack.push_back(originIndex);
 
-    while (vertexCheckStack.size() != 0) //evaluate next node on stack
+    while (vertexCheckStack.size() != 0) //evaluate next vertex on stack
     {
         //pop last vertex
         int vertex = vertexCheckStack.back();
@@ -137,14 +139,19 @@ Path WDGraph::GetShortestPath(int originIndex, int destIndex, bool doPrint) cons
 
     if (doPrint)
     {
-        PrintPath(bestPath);
-        std::cout << '\n';
+        if (bestPath.vertices.size() == 0)
+            std::cout << "There is no route from " << std::string(vertices[originIndex].airportCode,3) << " to " <<
+                std::string(vertices[destIndex].airportCode,3) << ".\n";
+        else
+            PrintPath(bestPath);
+        
+            std::cout << '\n';
     }
 
     return bestPath;
 }
 
-std::vector<Path> WDGraph::GetShortestPathsToState(int originIndex, const char* stateCode, const AirportParser& apParser, bool doPrint) const
+std::vector<Path> WDGraph::GetShortestPathsToState(int originIndex, const char* stateCode, const AirportStatePair& apParser, bool doPrint) const
 {
     //thread_local/static would again be nice, but this is simpler
     std::vector<Path> paths;
@@ -165,6 +172,108 @@ std::vector<Path> WDGraph::GetShortestPathsToState(int originIndex, const char* 
     return paths;
 }
 
+//Not Dijkstra's. I had an idea for doing this with Dijkstra's, but it would only be simple if "path" implied no repeat vertices
+//post-comment, apparently we can assume no repeats in a path. Very sad, the algorithm would've been super epic, have unfinished version saved somewhere else
+Path WDGraph::GetShortestPathFixedStops(int originIndex, int destIndex, int stopCount, bool doPrint) const
+{
+    //iterating through every possible path of length minStopCount+2, starting at origin
+    Path bestPath; //current best (valid) path to dest
+    std::vector<float> bestDist; //track distance at each point of bestPath to potentially join path to it
+
+    Path path;
+    std::vector<int>& pVertices = path.vertices;
+    std::vector<int>& pEdges = path.edges;
+    std::vector<float> dist;
+
+    //start path at origin and first edge (loop immediatly exits if no edges exist)
+    pVertices.push_back(originIndex);
+    pEdges.push_back(0);
+    dist.push_back(0);
+
+    while (pVertices.size() > 0)
+    {
+        if (pEdges.back() < edges[pVertices.back()].size())
+        {
+            const WDEdge& edge = edges[pVertices.back()][pEdges.back()];
+            
+            //remove this code to allow repeat vertices in path
+            for (int i = 0; i < path.vertices.size(); i++)
+                if (path.vertices[i] == edge.dest)
+                {
+                    pEdges.back()++;
+                    continue;
+                }
+            
+            //check if current path can be joined with best path to make a better path (optimization)
+            if (bestPath.vertices.size() > 0)
+            {
+                int pathLength = pVertices.size();
+                // if edge.dest would lead to the same vertex that is at bestPath and if it would reduce total distance
+                if (bestPath.vertices[pathLength] == edge.dest && dist.back()+edge.distance < bestDist[pathLength])
+                {
+                    //prepare bestDists by replacing them with distance to node
+                    for (int i = bestDist.size()-1; i > 0; i--)
+                        bestDist[i] = bestDist[i]-bestDist[i-1];
+                    //copy current path into start of bestPath
+                    for (int i = 0; i < pathLength; i++)
+                    {
+                        bestPath.vertices[i] = path.vertices[i];
+                        bestPath.edges[i] = path.edges[i];
+                        bestDist[i] = dist[i];
+                    }
+                    //update bestDists for rest of path, note that bestDist[i] is change in dist while bestDist[i-1] is total dist
+                    for (int i = pathLength; i < bestDist.size(); i++)
+                        bestDist[i] = bestDist[i-1] + bestDist[i];
+                    pEdges.back()++;
+                    continue;
+                }
+            }
+
+            if (pVertices.size() < stopCount+1) //add vertex if it won't be the final vertex
+            {
+                pVertices.push_back(edge.dest);
+                pEdges.push_back(0);
+                dist.push_back(dist.back()+edge.distance);
+            }
+            else //added vertex would be the final vertex in path
+            {
+                if (bestPath.vertices.size() == 0 && edge.dest == destIndex) //if final vertex is intended destination and best path doesn't exist yet, this is the first best path
+                {
+                    //copy path to bestPath, and finalize bestPath
+                    bestPath = path;
+                    bestDist = dist;
+                    bestPath.vertices.push_back(destIndex);
+                    bestDist.push_back(dist.back()+edge.distance);
+                }
+                pEdges.back()++;
+            }
+            continue;
+        }
+        //current edge to check is out of range, go back a vertex
+        dist.pop_back();
+        pVertices.pop_back();
+        pEdges.pop_back();
+        
+        //check next edge on next iteration
+        if (pEdges.size() > 0)
+            pEdges.back()++;
+    }
+    //iterated through every path
+
+    if (doPrint)
+    {
+        if (bestPath.vertices.size() == 0)
+            std::cout << "There is no route from " << std::string(vertices[originIndex].airportCode,3) << " to " <<
+                std::string(vertices[destIndex].airportCode,3) << " with exactly " << stopCount << " stops.\n";
+        else
+            PrintPathStops(bestPath, stopCount);
+        
+            std::cout << '\n';
+    }
+
+    return bestPath;
+}
+
 int WDGraph::GetPathDist(const Path& path) const
 {
     int dist = 0;
@@ -175,16 +284,18 @@ int WDGraph::GetPathDist(const Path& path) const
 
 void WDGraph::PrintPath(const Path& path) const
 {
+    //empty condition
     if (path.vertices.size() == 0)
     {
-        std::cout << "There is no route from " << std::string(vertices[path.vertices.front()].airportCode,3) << " to " <<
-            std::string(vertices[path.vertices.back()].airportCode,3) << ".\n";
+        std::cout << "Empty Path\n";
         return;
     }
+
     std::cout << "Shortest route from " << std::string(vertices[path.vertices.front()].airportCode,3) << " to " <<
         std::string(vertices[path.vertices.back()].airportCode,3) << ": ";
     int dist = 0;
     int cost = 0;
+    //print out path
     for (int i = 0; i < path.edges.size(); i++)
     {
         std::cout << std::string(vertices[path.vertices[i]].airportCode, 3) << " -> ";
@@ -245,6 +356,29 @@ void WDGraph::PrintPaths(const std::vector<Path>& paths) const
             std::cout << ' ';
         std::cout << cost << '\n';
     }
+}
+
+void WDGraph::PrintPathStops(const Path& path, int stops) const
+{
+    //empty condition
+    if (path.vertices.size() == 0)
+    {
+        std::cout << "Empty Path\n";
+        return;
+    }
+    std::cout << "Shortest route from " << std::string(vertices[path.vertices.front()].airportCode,3) << " to " <<
+        std::string(vertices[path.vertices.back()].airportCode,3) << " with " << stops << " stops: ";
+    int dist = 0;
+    int cost = 0;
+    //print paths
+    for (int i = 0; i < path.edges.size(); i++)
+    {
+        std::cout << std::string(vertices[path.vertices[i]].airportCode, 3) << " -> ";
+        dist += edges[path.vertices[i]][path.edges[i]].distance;
+        cost += edges[path.vertices[i]][path.edges[i]].cost;
+    }
+    std::cout << std::string(vertices[path.vertices.back()].airportCode, 3) << ". The Length is " << dist <<
+        ". The cost is " << cost << ".\n";
 }
 
 void WDGraph::clean_visited()

@@ -1,10 +1,10 @@
-#ifndef AIRPORTPARSER_H
-#define AIRPORTPARSER_H
+#ifndef AIRPORTSTATEPAIR_H
+#define AIRPORTSTATEPAIR_H
 
 #include <vector>
 #include <string>
 
-class AirportParser
+class AirportStatePair
 {
 private:
 	std::vector<char> apCodes; //3*number of elements, each element is unique

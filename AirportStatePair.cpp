@@ -1,8 +1,8 @@
-#include "AirportParser.h"
+#include "AirportStatePair.h"
 
 
 
-void AirportParser::AddAirportAndState(const char* apCode, const char* stCode)
+void AirportStatePair::AddAirportAndState(const char* apCode, const char* stCode)
 {
 	if (FindAirport(apCode) != -1)
 		return;
@@ -14,7 +14,7 @@ void AirportParser::AddAirportAndState(const char* apCode, const char* stCode)
 	stCodes.push_back(stCode[1]);
 }
 
-int AirportParser::FindAirport(const char* apCode)
+int AirportStatePair::FindAirport(const char* apCode)
 {
 	for (int i = 0; i < apCodes.size()/3; i++)
 	{
