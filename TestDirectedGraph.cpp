@@ -108,5 +108,6 @@ int main()
     int a2 = graph.SearchForCodeIndex("ORD");
     int a3 = graph.SearchForCodeIndex("IAD");
     int a4 = graph.SearchForCodeIndex("MIA");
+
     return 0;
 };

@@ -53,7 +53,7 @@ const WDVertex& WDGraph::SearchForCode(const char* code) const
     throw std::string("Error in SearchForCode: could not find code");
 }
 
-//Like Dijkstra's but without the priority queue
+//Dijkstra's
 Path WDGraph::GetShortestPath(int originIndex, int destIndex, bool doPrint) const
 {
     if (originIndex == destIndex) //return empty path if origin and dest are the same
@@ -70,14 +70,20 @@ Path WDGraph::GetShortestPath(int originIndex, int destIndex, bool doPrint) cons
     for (int i = 0; i < vertexBestDirections.size(); i++)
         vertexBestDirections[i] = -1;
 
-    std::vector<int> vertexCheckStack; //Vertices to check
-    vertexCheckStack.push_back(originIndex);
+    struct VertexDistPair
+    {
+        int vertex = 0; int bestDist = 0;
+        VertexDistPair() {}
+        VertexDistPair(int vertexInt, int bestDistInt) { vertex = vertexInt; bestDist = bestDistInt; }
+        bool operator<(const VertexDistPair& v) { return bestDist < v.bestDist; }
+    };
+    MinHeap<VertexDistPair> vertexCheckQueue; //Vertices to check
+    vertexCheckQueue.AddItem(VertexDistPair(originIndex,0));
 
-    while (vertexCheckStack.size() != 0) //evaluate next vertex on stack
+    while (vertexCheckQueue.data.size() != 0) //evaluate next vertex on stack
     {
         //pop last vertex
-        int vertex = vertexCheckStack.back();
-        vertexCheckStack.pop_back();
+        int vertex = vertexCheckQueue.PopMin().vertex;
         
         //best distance of current vertex
         int vDist = vertexBestDists[vertex];
@@ -95,7 +101,7 @@ Path WDGraph::GetShortestPath(int originIndex, int destIndex, bool doPrint) cons
                 nextBest = vDist+vEdges[i].distance; //update vertexBestDists
                 vertexBestDirections[nextVert] = vertex;
                 if (nextVert != destIndex) //don't add destination vertex to check stack
-                    vertexCheckStack.push_back(nextVert);
+                    vertexCheckQueue.AddItem(VertexDistPair(nextVert,nextBest));
             }
             //if potential path was longer than best, do not add vertex to check stack
         }

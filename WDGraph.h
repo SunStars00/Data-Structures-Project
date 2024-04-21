@@ -8,6 +8,7 @@
 #include "WDEdge.h"
 #include "Path.h"
 #include "AirportStatePair.h"
+#include "MinHeap.h"
 
 //class to represent a directed graph using WDVertexs and WDEdges, edges are weighted by distance, but there is also a cost value
 class WDGraph
