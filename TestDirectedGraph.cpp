@@ -1,19 +1,18 @@
 #include "WDGraph.h"
+#include "WDVertex.h"
 #include "AirportParser.h"
+#include "WUDGraph.h"
 
 #include <iostream>
-#include <fstream>
 #include <sstream>
 
 using namespace std;
 
-string inputFilePath = "airports.csv";
+string inputFilePath = "../airports.csv";
+//string inputFilePath = "airports.csv";
 
 void CreateGraphFromFile(WDGraph& graph, AirportParser& ap)
 {
-    //cout << "CreateGraphFromFile" << endl;
-
-    // Origin_airport,Destination_airport,Origin_city,Destination_city,Distance,Cost
     FILE* inputFile = fopen(inputFilePath.c_str(), "r");
     int lineIndex = 0;
     while (!feof(inputFile) && inputFile != nullptr)
@@ -23,10 +22,8 @@ void CreateGraphFromFile(WDGraph& graph, AirportParser& ap)
         char line[1024];
         fgets(line, 1024, inputFile);
 
-        if (lineIndex == 1) // Dont parse the header line
-        {
-            continue;
-        }
+        // Don't parse the header line
+        if (lineIndex == 1) continue;
 
         stringstream ss(line);
         string originAirport;
@@ -35,8 +32,8 @@ void CreateGraphFromFile(WDGraph& graph, AirportParser& ap)
         string originState;
         string destinationCity;
         string destinationState;
-        string distance;
-        string cost;
+        string distanceString;
+        string costString;
 
         getline(ss, originAirport, ',');
         getline(ss, destinationAirport, ',');
@@ -51,32 +48,28 @@ void CreateGraphFromFile(WDGraph& graph, AirportParser& ap)
         getline(ss, destinationState, ',');
         destinationState = destinationState.substr(1, destinationState.size() - 2); // Removes extra quotes and spaces
 
-        getline(ss, distance, ',');
-        getline(ss, cost, ',');
+        getline(ss, distanceString, ',');
+        getline(ss, costString, ',');
 
-        /*cout << endl;
-        cout << "originAirport: " << originAirport << endl;
-        cout << "destinationAirport: " << destinationAirport << endl;
-        cout << "originCity: " << originCity << endl;
-        cout << "originState: " << originState << endl;
-        cout << "destinationCity: " << destinationCity << endl;
-        cout << "destinationState: " << destinationState << endl;
-        cout << "distance: " << distance << endl;
-        cout << "cost: " << cost << endl;*/
+//        cout << endl;
+//        cout << "originAirport: " << originAirport << endl;
+//        cout << "destinationAirport: " << destinationAirport << endl;
+//        cout << "originCity: " << originCity << endl;
+//        cout << "originState: " << originState << endl;
+//        cout << "destinationCity: " << destinationCity << endl;
+//        cout << "destinationState: " << destinationState << endl;
+//        cout << "distance: " << distanceString << endl;
+//        cout << "cost: " << costString << endl;
 
-        graph.add_vertex(originAirport.c_str());
-        graph.add_vertex(destinationAirport.c_str());
-        graph.add_edge(originAirport.c_str(), destinationAirport.c_str(), stoi(distance), stoi(cost));
-        char state[2]; state[0] = originState[0]; state[1] = originState[1];
-        ap.AddAirportAndState(originAirport.c_str(), state);
-        state[0] = destinationState[0]; state[1] = destinationState[1];
-        ap.AddAirportAndState(destinationAirport.c_str(), state);
+        WDVertex originVertex = WDVertex(originAirport.c_str());
+        WDVertex destinationVertex = WDVertex(destinationAirport.c_str());
 
+        graph.add_vertex(originVertex);
+        graph.add_vertex(destinationVertex);
+        graph.add_edge(originVertex, destinationVertex, stoi(distanceString), stoi(costString));
 
-
-//        cout << "add vertex: " << originAirport << endl;
-//        cout << "add vertex: " << destinationAirport << endl;
-//        cout << "add edge: " << originAirport << " -> " << destinationAirport << " distance: " << distance << " cost: " << cost << endl;
+        ap.AddAirportAndState(originAirport.c_str(), new char [2] {originState[0], originState[1]});
+        ap.AddAirportAndState(destinationAirport.c_str(), new char [2] {destinationState[0], destinationState[1]});
     }
 }
 
@@ -86,16 +79,33 @@ int main()
     AirportParser ap;
     CreateGraphFromFile(graph, ap);
 
-    //Path p = graph.GetShortestPath(graph.SearchForCodeIndex("ATL"), graph.SearchForCodeIndex("SLC"));
-    Path p1 = graph.GetShortestPath(graph.SearchForCodeIndex("IAD"), graph.SearchForCodeIndex("MIA"));
-    std::vector<Path> p2 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("ATL"), "FL", ap);
-    std::vector<Path> p3 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("ATL"), "NY", ap);
-    std::vector<Path> p4 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("ATL"), "TX", ap);
-    std::vector<Path> p5 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("MCO"), "TX", ap);
+//    Path p = graph.GetShortestPath(graph.SearchForCodeIndex("ATL"), graph.SearchForCodeIndex("SLC"));
+//    Path p1 = graph.GetShortestPath(graph.SearchForCodeIndex("IAD"), graph.SearchForCodeIndex("MIA"));
+
+//    vector<Path> p3 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("ATL"), "FL", ap);
+//    vector<Path> p4 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("ATL"), "NY", ap);
+//    vector<Path> p5 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("ATL"), "TX", ap);
+//    vector<Path> p6 = graph.GetShortestPathsToState(graph.SearchForCodeIndex("MCO"), "TX", ap);
 
     int a1 = graph.SearchForCodeIndex("ATL");
     int a2 = graph.SearchForCodeIndex("ORD");
     int a3 = graph.SearchForCodeIndex("IAD");
     int a4 = graph.SearchForCodeIndex("MIA");
+
+    //     main tree weight = 24961
+
+    WUDGraph wudGraph(&graph);
+    bool connected = wudGraph.IsGraphConnected();
+    WDGraph primMST = wudGraph.PrimMST();
+    WDGraph kruskalMST = wudGraph.KruskalMST();
+
+    cout << "The graph is " << ((connected) ? "" : "not ") << "connected" << endl;
+
+    cout << endl;
+
+    wudGraph.PrintMST(primMST, "Minimum Spanning Tree (Prim's Algorithm)");
+    cout << endl;
+    wudGraph.PrintMST(kruskalMST, "Minimum Spanning Tree (Kruskal's Algorithm)");
+
     return 0;
 };

@@ -1,0 +1,18 @@
+Origin_airport,Destination_airport,Origin_city,Destination_city,Distance,Cost
+ABE,DTW,"Allentown, PA","Detroit, MI",424,374
+ACY,BOS,"Atlantic City, NJ","Boston, MA",274,225
+AFW,AUS,"Dallas, TX","Austin, TX",194,123
+AGS,ATL,"Augusta, GA","Atlanta, GA",143,267
+ALB,BOS,"Albany, NY","Boston, MA",145,312
+ALB,DAY,"Albany, NY","Dayton, OH",576,159
+ALB,DTW,"Albany, NY","Detroit, MI",488,376
+ALB,ORD,"Albany, NY","Chicago, IL",723,200
+ANC,ADQ,"Anchorage, AK","Kodiak, AK",252,277
+ANC,JNU,"Anchorage, AK","Juneau, AK",571,294
+ANC,MIA,"Anchorage, AK","Miami, FL",4004,292
+ANC,ORD,"Anchorage, AK","Chicago, IL",2846,128
+ATL,ABY,"Atlanta, GA","Albany, GA",146,102
+ATL,AUS,"Atlanta, GA","Austin, TX",812,102
+ATL,BGR,"Atlanta, GA","Bangor, ME",1134,228
+ATL,BOS,"Atlanta, GA","Boston, MA",946,250
+ATL,BZN,"Atlanta, GA","Bozeman, MT",1641,184

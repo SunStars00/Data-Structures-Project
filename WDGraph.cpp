@@ -1,5 +1,7 @@
 #include "WDGraph.h"
 
+using namespace std;
+
 void WDGraph::add_vertex(const WDVertex& ver)
 {
     if (get_vertex_index(ver) == -1) {
@@ -14,7 +16,7 @@ void WDGraph::add_edge(const WDVertex& ver1, const WDVertex& ver2, int distance,
     int i1 = get_vertex_index(ver1);
     int i2 = get_vertex_index(ver2);
     if (i1 == -1 || i2 == -1) {
-        throw std::string("add_edge: ver1 or ver2 are not vertices in the graph");
+        throw "add_edge: ver1 or ver2 are not vertices in the graph";
     }
     WDEdge edge(i1, i2, distance, cost);
     edges[i1].push_back(edge);
@@ -22,7 +24,7 @@ void WDGraph::add_edge(const WDVertex& ver1, const WDVertex& ver2, int distance,
 
 int WDGraph::get_vertex_index(const WDVertex& ver) const
 {
-    for(int i = 0; i < vertices.size(); i++) {
+    for (int i = 0; i < vertices.size(); i++) {
         if (vertices[i].CompareCode(ver.airportCode)) {
             return i;
         }
