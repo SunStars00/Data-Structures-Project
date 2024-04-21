@@ -1,7 +1,6 @@
 #include "WDGraph.h"
 #include "AirportStatePair.h"
 #include "WDVertex.h"
-#include "AirportParser.h"
 #include "WUDGraph.h"
 
 #include <iostream>
@@ -9,6 +8,8 @@
 
 using namespace std;
 
+//string inputFilePath = "../airports.csv";
+//string inputFilePath = "../pairports.csv";
 string inputFilePath = "airports.csv";
 
 void CreateGraphFromFile(WDGraph& graph, AirportStatePair& ap)
