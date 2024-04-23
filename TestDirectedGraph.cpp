@@ -8,9 +8,9 @@
 
 using namespace std;
 
-//string inputFilePath = "../airports.csv";
+string inputFilePath = "../airports.csv";
 //string inputFilePath = "../pairports.csv";
-string inputFilePath = "airports.csv";
+//string inputFilePath = "airports.csv";
 
 void CreateGraphFromFile(WDGraph& graph, AirportStatePair& ap)
 {
@@ -78,43 +78,51 @@ int main()
 {
     WDGraph graph;
     AirportStatePair ap;
+
+    // Task 1
     CreateGraphFromFile(graph, ap);
 
-    //Path p = graph.GetShortestPath(graph.SearchForCodeIndex("ATL"), graph.SearchForCodeIndex("SLC"));
-    Path p1 = graph.GetShortestPath("IAD", "MIA");
-    
-    std::vector<Path> p2 = graph.GetShortestPathsToState("ATL", "FL", ap);
-    std::vector<Path> p3 = graph.GetShortestPathsToState("ATL", "NY", ap);
-    std::vector<Path> p4 = graph.GetShortestPathsToState("ATL", "TX", ap);
-    std::vector<Path> p5 = graph.GetShortestPathsToState("MCO", "TX", ap);
-    
-    Path p6 = graph.GetShortestPathFixedStops("ATL", "ELP", 2);
-    Path p7 = graph.GetShortestPathFixedStops("MCO", "AUS", 1);
-    Path p8 = graph.GetShortestPathFixedStops("MCO", "ELP", 2);
-    Path p9 = graph.GetShortestPathFixedStops("IAD", "MIA", 3);
-    Path p10 = graph.GetShortestPathFixedStops("ORD", "PIA", 0);
+    // Task 2
+//    //Path p = graph.GetShortestPath(graph.SearchForCodeIndex("ATL"), graph.SearchForCodeIndex("SLC"));
+//    Path p1 = graph.GetShortestPath("IAD", "MIA");
+//    Path p0 = graph.GetShortestPath("PIT", "ACT");
+//
+//    // Task 3
+//    std::vector<Path> p2 = graph.GetShortestPathsToState("ATL", "FL", ap);
+//    std::vector<Path> p3 = graph.GetShortestPathsToState("ATL", "NY", ap);
+//    std::vector<Path> p4 = graph.GetShortestPathsToState("ATL", "TX", ap);
+//    std::vector<Path> p5 = graph.GetShortestPathsToState("MCO", "TX", ap);
+//
+//    // Task 4
+//    Path p6 = graph.GetShortestPathFixedStops("ATL", "ELP", 2);
+//    Path p7 = graph.GetShortestPathFixedStops("MCO", "AUS", 1);
+//    Path p8 = graph.GetShortestPathFixedStops("MCO", "ELP", 2);
+//    Path p9 = graph.GetShortestPathFixedStops("IAD", "MIA", 3);
+//    Path p10 = graph.GetShortestPathFixedStops("ORD", "PIA", 0);
+//    Path p11 = graph.GetShortestPathFixedStops("IAD", "MIA", 1);
+//    Path p12 = graph.GetShortestPathFixedStops("PIT", "ACT", 2);
 
-    Path p11 = graph.GetShortestPathFixedStops("IAD", "MIA", 1);
+//    int a1 = graph.SearchForCodeIndex("ATL");
+//    int a2 = graph.SearchForCodeIndex("ORD");
+//    int a3 = graph.SearchForCodeIndex("IAD");
+//    int a4 = graph.SearchForCodeIndex("MIA");
 
-    int a1 = graph.SearchForCodeIndex("ATL");
-    int a2 = graph.SearchForCodeIndex("ORD");
-    int a3 = graph.SearchForCodeIndex("IAD");
-    int a4 = graph.SearchForCodeIndex("MIA");
-
-    //     main tree weight = 24961
-
+////    Task 5
+//    graph.PrintAirportConnections();
+//
+////    Task 6
     WUDGraph wudGraph(&graph);
-    bool connected = wudGraph.IsGraphConnected();
-    WDGraph primMST = wudGraph.PrimMST();
-    WDGraph kruskalMST = wudGraph.KruskalMST();
-
-    cout << "The graph is " << ((connected) ? "" : "not ") << "connected" << endl;
-
-    cout << endl;
-
-    wudGraph.PrintMST(primMST, "Minimum Spanning Tree (Prim's Algorithm)");
-    cout << endl;
-    wudGraph.PrintMST(kruskalMST, "Minimum Spanning Tree (Kruskal's Algorithm)");
+//    bool connected = wudGraph.IsGraphConnected();
+//    cout << "The graph is " << ((connected) ? "" : "not ") << "connected" << "\n\n";
+//
+////    Task 7
+//    WDGraph primMST = wudGraph.PrimMST();
+//    wudGraph.PrintMST(primMST, "Minimum Spanning Tree (Prim's Algorithm)");
+//    cout << endl;
+//
+////    Task 8
+//    WDGraph kruskalMST = wudGraph.KruskalMST();
+//    wudGraph.PrintMST(kruskalMST, "Minimum Spanning Tree (Kruskal's Algorithm)");
 
     return 0;
 };

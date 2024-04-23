@@ -1,21 +1,19 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.26)
 project(Data_Structures_Project)
 
-set(CMAKE_CXX_STANDARD 14)
-
-include_directories(.)
+set(CMAKE_CXX_STANDARD 17)
 
 add_executable(Data_Structures_Project
-    AirportParser.cpp
-    AirportParser.h
-    Path.h
-    TestDirectedGraph.cpp
-    WDEdge.h
-    WDGraph.cpp
-    WDGraph.h
-    WDVertex.h
-        WUDGraph.cpp
-        WUDGraph.h
+        TestDirectedGraph.cpp
+        AirportStatePair.cpp
+        AirportStatePair.h
+        MinHeap.h
+        Path.h
+        WDEdge.h
+        WDVertex.h
+        WDGraph.cpp
+        WDGraph.h
         WUDEdge.h
         WUDVertex.h
-)
+        WUDGraph.cpp
+        WUDGraph.h)

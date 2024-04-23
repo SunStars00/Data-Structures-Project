@@ -19,7 +19,10 @@ public:
     //add stuff to the graph
     void add_vertex(const WDVertex& ver);
     void add_edge(const WDVertex& ver1, const WDVertex& ver2, int distance, int cost); //connect ver1 to ver2
-    
+
+    // Print all inbound and outbound connections for each airport
+    void PrintAirportConnections() const;
+
     //SearchForCodeIndex is preferred
     int get_vertex_index(const WDVertex& ver) const;
     //Get a reference to an index at the vertex vector, liable to invalidation when adding vertices
@@ -38,7 +41,7 @@ public:
     //Unoptimally gets the shortest path with a specific number of stops.
     Path GetShortestPathFixedStops(int originIndex, int destIndex, int stopCount, bool doPrint = true) const;
     Path GetShortestPathFixedStops(const char* originCode, const char* destCode, int stopCount, bool doPrint = true) const {return GetShortestPathFixedStops(SearchForCodeIndex(originCode),SearchForCodeIndex(destCode),stopCount,doPrint);}
-    
+
     //Get total distance of a path
     int GetPathDist(const Path& path) const;
     //Print out a path and its info

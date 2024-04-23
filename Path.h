@@ -3,12 +3,13 @@
 
 #include <vector>
 
+using namespace std;
+
 class Path
 {
 public:
-
-	std::vector<int> vertices; //vertexes in path
-	std::vector<int> edges; //indexes to edges in a vertex's edge vector
+    vector<int> vertices; //vertexes in path
+    vector<int> edges; //indexes to edges in a vertex's edge vector
 };
 
 #endif

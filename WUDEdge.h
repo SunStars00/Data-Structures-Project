@@ -1,9 +1,9 @@
 #ifndef WUDEDGE_H
 #define WUDEDGE_H
 
-#include <vector>
+#include "WDEdge.h"
 
-using namespace std;
+#include <vector>
 
 using namespace std;
 

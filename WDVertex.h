@@ -6,34 +6,30 @@
 class WDVertex
 {
 public:
-	char airportCode[3];
-	bool visited;
-	
-	WDVertex()
-	{
-		airportCode[0] = 'A';
-		airportCode[1] = 'A';
-		airportCode[2] = 'A';
+    char airportCode[3];
+    bool visited;
 
-		visited = false;
-	}
-	WDVertex(const char* airportCodeChars)
-	{
-		airportCode[0] = airportCodeChars[0];
-		airportCode[1] = airportCodeChars[1];
-		airportCode[2] = airportCodeChars[2];
-	
-		visited = false;
-	}
+    WDVertex()
+    {
+        airportCode[0] = 'A';
+        airportCode[1] = 'A';
+        airportCode[2] = 'A';
 
-	bool CompareCode(const char* otherCode) const
-	{
+        visited = false;
+    }
+    WDVertex(const char* airportCodeChars)
+    {
+        airportCode[0] = airportCodeChars[0];
+        airportCode[1] = airportCodeChars[1];
+        airportCode[2] = airportCodeChars[2];
+
+        visited = false;
+    }
+
+    bool CompareCode(const char* otherCode) const
+    {
         return (airportCode[0] == otherCode[0] && airportCode[1] == otherCode[1] && airportCode[2] == otherCode[2]);
-//		if (airportCode[0] == otherCode[0] && airportCode[1] == otherCode[1] && airportCode[2] == otherCode[2])
-//			return true;
-//		else
-//			return false;
-	}
+    }
 };
 
 #endif
