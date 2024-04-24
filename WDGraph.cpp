@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <tuple>
 #include "WDGraph.h"
 
 using namespace std;
